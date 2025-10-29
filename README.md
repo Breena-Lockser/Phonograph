@@ -1,6 +1,7 @@
+# Installation and set-up
+
+## Python
 ```bash
 python -m venv venv
-```
-```bash
-pip install -r REQUERIMENTS.txt
+pip install -r requeriments.txt
 ```
