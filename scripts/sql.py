@@ -54,6 +54,17 @@ def removeSong():
     pass
 
 
+def listSongs():
+    cur = connection.cursor()
+    cur.execute("SELECT * from songs")
+    try:
+        songs = cur.fetchall()
+        cur.close()
+        return songs
+    except:
+        return False
+
+
 def addFolder(folderDate, path):
     cur = connection.cursor()
     cur.execute("INSERT INTO folders (date, path, countdown) VALUES (?, ?, ?)", (folderDate, path, 3))

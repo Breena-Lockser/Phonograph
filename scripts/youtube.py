@@ -3,7 +3,6 @@
 ---------------------------
 Author:     Breena Lockser
 Date:       2025-10-30
-Version:    0.2
 ---------------------------
 """
 
@@ -59,4 +58,3 @@ while True:
         break
     else:
         print("Not a valid response.")
-search_video(input("Song Name: "))
