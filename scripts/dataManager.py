@@ -69,3 +69,16 @@ def debug_reset():
             print(folderDir, "has been removed") 
         else:
             print(folderDir, "is not a dir.")
+
+# DEBUG ONLY
+def restart_database():
+    SQL.databaseCreation()
+    while True:
+        userInput = input("Wish to remove all data? (y/n)\n").lower()
+        if userInput == "y":
+            debug_reset()
+            break
+        elif userInput == "n":
+            break
+        else:
+            print("Not a valid response.")

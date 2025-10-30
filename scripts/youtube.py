@@ -11,7 +11,7 @@ import sql as SQL
 import dataManager as data
 import os
 
-def download_song(songName, videoURL):
+def download_song(songName, songTitle, videoURL):
     # Setup the options for yt-dlp
     params = {
         'format': 'bestaudio/best',  # Downloads the best audio format
@@ -27,7 +27,7 @@ def download_song(songName, videoURL):
     with ytdlp.YoutubeDL(params) as ydl:
         # Search and extract only the first result
         ydl.download([videoURL])
-        SQL.addSong(songName, folderDate, folderID, videoURL, songPath)
+        SQL.addSong(songName, songTitle, folderDate, folderID, videoURL, songPath)
 
 
 def search_video(songName):
@@ -46,15 +46,4 @@ def search_video(songName):
         print(f"🎵 Found video: {video_url}")
     if result['entries'][0]['duration'] < 300:
         songYoutubeName = result['entries'][0]['title']
-        download_song(songYoutubeName, video_url)
-
-SQL.databaseCreation()
-while True:
-    userInput = input("Wish to remove all data? (y/n)\n").lower()
-    if userInput == "y":
-        data.debug_reset()
-        break
-    elif userInput == "n":
-        break
-    else:
-        print("Not a valid response.")
+        download_song(songName, songYoutubeName, video_url)

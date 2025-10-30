@@ -19,6 +19,7 @@ def databaseCreation():
         """CREATE TABLE IF NOT EXISTS songs(
             song_id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
             song_name TEXT NOT NULL UNIQUE,
+            song_title TEXT NTO NULL UNIQUE,
             folder_date TEXT NOT NULL,
             folder_id INTEGER,
             video_url TEXT NOT NULL UNIQUE,
@@ -40,9 +41,9 @@ def databaseCreation():
     connection.commit()
 
 
-def addSong(songName, folderDate, folderID, videoURL, path):
+def addSong(songName, songTitle, folderDate, folderID, videoURL, path):
     cur = connection.cursor()
-    cur.execute("INSERT INTO songs (song_name, folder_date, folder_id, video_url, path) VALUES (?, ?, ?, ?, ?)", (songName, folderDate, folderID, videoURL, path))
+    cur.execute("INSERT INTO songs (song_name, song_title, folder_date, folder_id, video_url, path) VALUES (?, ?, ?, ?, ?, ?)", (songName, songTitle, folderDate, folderID, videoURL, path))
     cur.close()
 
     connection.commit()
@@ -61,6 +62,17 @@ def listSongs():
         songs = cur.fetchall()
         cur.close()
         return songs
+    except:
+        return False
+    
+
+def getSongData(songID):
+    cur = connection.cursor()
+    cur.execute("SELECT * from songs where song_id = ?", (songID,))
+    try:
+        songData = cur.fetchone()
+        cur.close()
+        return songData
     except:
         return False
 
