@@ -10,7 +10,7 @@ It doesn't end there though, to be even more efficient, I thought of a way to ma
 And the thing is, you couldn't even be mad, as it saves so much data that you can return to watching videos in YouTube whilst not worrying so much about data usage.
 
 ## TL-DR
-This is an app that serves as a middle-point from the downloading and streaming songs/music, for those who tend to change with their taste in music.
+This is an app that serves as a middle-point from the downloading and streaming songs/music, for those who tend to change with their taste in music every few weeks.
 
 # Installation and set-up for development
 
