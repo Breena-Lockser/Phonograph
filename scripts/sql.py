@@ -8,55 +8,54 @@ Date:       2025-10-30
 
 import sqlite3 as SQL
 
-# Connect to the database
-connection = SQL.connect("DBs/Phonograph.db")
+
+# Create or Connect to the database.
+def databaseConnection():
+    # Connect to the database
+    connectionDB = SQL.connect("DBs/Phonograph.db")
+    return connectionDB
 
 
-def databaseCreation():
-    cur = connection.cursor()
-    
-    commands = [
-        """CREATE TABLE IF NOT EXISTS songs(
-            song_id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
-            song_name TEXT NOT NULL UNIQUE,
-            song_title TEXT NTO NULL UNIQUE,
-            folder_date TEXT NOT NULL,
-            folder_id INTEGER,
-            video_url TEXT NOT NULL UNIQUE,
-            path TEXT NOT NULL UNIQUE,
-            FOREIGN KEY(folder_id) REFERENCES maps(folder_id)
-        )""",
-        """CREATE TABLE IF NOT EXISTS folders(
-            folder_id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
-            date TEXT NOT NULL UNIQUE,
-            path TEXT NOT NULL UNIQUE,
-            countdown INTEGER NOT NULL
-        )"""
-    ]
+# Creates the DB tables (Restart the DB if you're a developer.)
+def databaseCreation(connectionDB):
+    cur = connectionDB.cursor()
+    command = """CREATE TABLE IF NOT EXISTS songs(
+                    song_id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+                    song_name TEXT NOT NULL UNIQUE,
+                    song_title TEXT NTO NULL UNIQUE,
+                    video_url TEXT NOT NULL UNIQUE,
+                    countdown INTEGER NOT NULL,
+                    path TEXT NOT NULL UNIQUE
+                )"""
 
-    for command in commands:
-        cur.execute(command)
-    
+    cur.execute(command)
     cur.close()
-    connection.commit()
+    connectionDB.commit()
+    return
 
 
-def addSong(songName, songTitle, folderDate, folderID, videoURL, path):
-    cur = connection.cursor()
-    cur.execute("INSERT INTO songs (song_name, song_title, folder_date, folder_id, video_url, path) VALUES (?, ?, ?, ?, ?, ?)", (songName, songTitle, folderDate, folderID, videoURL, path))
+# Add a song by using the youtube.py parameters.
+def addSong(connectionDB, songName, songTitle, videoURL, path):
+    cur = connectionDB.cursor()
+    cur.execute("INSERT INTO songs (song_name, song_title, countdown, video_url, path) VALUES (?, ?, ?, ?, ?)", (songName, songTitle, 3, videoURL, path))
     cur.close()
 
-    connection.commit()
+    connectionDB.commit()
     return True
 
 
-def removeSong():
-    # TO-DO
-    pass
+# Remove a song with a certain ID
+def removeSong(connectionDB):
+    cur = connectionDB.cursor()
+    cur.execute("REMOVE FROM songs WHERE song_id = ?", (songName,))
+    cur.close()
+    connectionDB.commit()
+    return
 
 
-def listSongs():
-    cur = connection.cursor()
+# List all songs in the songs table in DB.
+def listSongs(connectionDB):
+    cur = connectionDB.cursor()
     cur.execute("SELECT * from songs")
     try:
         songs = cur.fetchall()
@@ -64,10 +63,29 @@ def listSongs():
         return songs
     except:
         return False
-    
 
-def getSongData(songID):
-    cur = connection.cursor()
+
+# Remove songs with a countdown value of <0>
+def removeOldSongs(connectionDB):
+    cur = connectionDB.cursor()
+    cur.execute("remove FROM songs WHERE countodown = 0")
+    cur.close()
+    connectionDB.commit()
+    return
+
+
+# Lower by 1 every song countdown (Only done if date has changed.)
+def lowerCountdown(connectionDB):
+    cur = connectionDB.cursor()
+    cur.execute("UPDATE songs SET countdown = countdown - 1")
+    cur.close()
+    connectionDB.commit()
+    return
+
+
+# Check all song data from a song with a certain ID.
+def getSongData(connectionDB, songID):
+    cur = connectionDB.cursor()
     cur.execute("SELECT * from songs where song_id = ?", (songID,))
     try:
         songData = cur.fetchone()
@@ -77,62 +95,10 @@ def getSongData(songID):
         return False
 
 
-def addFolder(folderDate, path):
-    cur = connection.cursor()
-    cur.execute("INSERT INTO folders (date, path, countdown) VALUES (?, ?, ?)", (folderDate, path, 3))
-    cur.close()
-
-    connection.commit()
-    return True
-
-
-def removeFolder(folderID):
-    cur = connection.cursor()
-    try:
-        cur.execute("REMOVE FROM folders WHERE folder_id = (?)", (folderID,))
-        cur.close()
-
-        connection.commit()
-        return True
-    except:
-        print("The folder doesn't exist!")
-        cur.close()
-        return False
-
-
-def checkFolder(folderDate):
-    cur = connection.cursor()
-    cur.execute("SELECT * FROM folders WHERE date = ?", (folderDate,))
-    try:
-        folderData = cur.fetchone()
-        cur.close()
-        return folderData
-    except:
-        return False
-
-
-def checkAllFolders():
-    cur = connection.cursor()
-    cur.execute("SELECT * from folders")
-    try:
-        folders = cur.fetchall()[0]
-        cur.close()
-        return folders
-    except:
-        return False
-    
-
 # DEBUG ONLY
-def SQLreset():
-    cur = connection.cursor()
-    commands = [
-        "DELETE FROM folders",
-        "DELETE FROM songs"
-    ]
-    for command in commands:
-        cur.execute(command)
+def SQLreset(connectionDB):
+    cur = connectionDB.cursor()
+    cur.execute("DELETE FROM songs")
     cur.close()
-
-
-if __name__ == '__main__':
-    databaseCreation()
+    connectionDB.commit()
+    return

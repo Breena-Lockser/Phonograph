@@ -10,46 +10,26 @@ import sql as SQL
 import datetime, os, shutil
 
 
-def temporary_folder():
-    # Get today's date.
-    date = datetime.datetime.now().strftime("%x")
-    check_date(date)
-    try:
-        folderData = SQL.checkFolder(date.replace("/", "-"))
-        if folderData == False:
-            # Replace the / with -
-            date = date.replace("/", "-")
-            if not os.path.isdir(os.path.join("tmp", date)):
-                path = os.path.join("tmp", date)
-                os.mkdir(path)
-                if SQL.addFolder(date, path):
-                    folderData = SQL.checkFolder(date)
-                    print(folderData)
-            return date, folderData[0]
-        else:
-            folderID, folderDate = folderData[0], folderData[1]
-            return folderDate, folderID
-    except:
-        # Replace the / with -
-        date = date.replace("/", "-")
-        if not os.path.isdir(os.path.join("tmp", date)):
-            path = os.path.join("tmp", date)
+# Create all necessary folders for correct usage of the program.
+def createFolders():
+    dirs = ["tmp", 'DBs']
+    for folder in dirs:
+        path = os.path.join(folder)
+        if not os.path.isdir(path):
             os.mkdir(path)
-            if SQL.addFolder(date, path):
-                folderData = SQL.checkFolder(date)
-                print(folderData)
-        return date, folderData[0]
 
 
-def check_date(date):
+# Checks the date of files in DB.
+def check_date(connectionDB):
+    date = datetime.datetime.now().strftime("%x")
     try:
         with open("lastDate.txt", "r") as f:
             lastdate = f.readline() 
             f.close()
 
         if date != lastdate:
-            foldersData = SQL.checkAllFolders()
-            print(foldersData)
+            SQL.removeOldSongs(connectionDB)
+            SQL.lowerCountdown(connectionDB)
             with open("lastDate.txt", "w") as f:
                 f.write(date)
     except:
@@ -58,25 +38,26 @@ def check_date(date):
 
 
 # DEBUG ONLY
-def debug_reset():
-    SQL.SQLreset()
-    root = "tmp"
-    for folder in os.listdir(os.path.join(root)):
-        print("In directory {}".format(folder))
-        folderDir = os.path.join(root, folder)
-        if os.path.isdir(folderDir):
-            shutil.rmtree(folderDir)
-            print(folderDir, "has been removed") 
-        else:
-            print(folderDir, "is not a dir.")
+def debug_reset(connectionDB):
+    SQL.SQLreset(connectionDB)
+    root = path.join("tmp")
+    for filename in os.listdir(root):
+        filePath = os.path.join(root, filename)
+        try:
+            if os.path.isfile(filePath) or os.path.islink(filePath):
+                os.unlink(filePath)
+            elif os.path.isdir(filePath):
+                shutil.rmtree(filePath)
+        except Exception as e:
+            print('Failed to delete %s. Reason: %s' % (filePath, e))
+
 
 # DEBUG ONLY
-def restart_database():
-    SQL.databaseCreation()
+def restart_database(connectionDB):
     while True:
         userInput = input("Wish to remove all data? (y/n)\n").lower()
         if userInput == "y":
-            debug_reset()
+            SQL.SQLreset(connectionDB)
             break
         elif userInput == "n":
             break
