@@ -78,11 +78,13 @@ def initializeTUI(connectionDB):
         if len(userInput) == 0:
             print("Please, insert a command ID.")
         else:
-
+            try:
                 userInput = int(userInput)
                 if userInput == 9:
                     break
                 commandInitialization(userInput, connectionDB)
+            except:
+                print("Not a valid ID.")
 
 
 # Manages the id given by the user.
