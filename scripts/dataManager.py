@@ -2,7 +2,7 @@
         dataManager.py
 ---------------------------
 Author:     Breena Lockser
-Date:       2025-10-30
+Date:       2025-11-18
 ---------------------------
 """
 
@@ -12,7 +12,7 @@ import datetime, os, shutil
 
 # Create all necessary folders for correct usage of the program.
 def createFolders():
-    dirs = ["tmp", 'DBs']
+    dirs = ["tmp", "DBs", "playlists"]
     for folder in dirs:
         path = os.path.join(folder)
         if not os.path.isdir(path):
@@ -35,21 +35,6 @@ def check_date(connectionDB):
     except:
         with open("lastDate.txt", "w") as f:
             f.write(date)
-
-
-# DEBUG ONLY
-def debug_reset(connectionDB):
-    SQL.SQLreset(connectionDB)
-    root = path.join("tmp")
-    for filename in os.listdir(root):
-        filePath = os.path.join(root, filename)
-        try:
-            if os.path.isfile(filePath) or os.path.islink(filePath):
-                os.unlink(filePath)
-            elif os.path.isdir(filePath):
-                shutil.rmtree(filePath)
-        except Exception as e:
-            print('Failed to delete %s. Reason: %s' % (filePath, e))
 
 
 # DEBUG ONLY

@@ -2,7 +2,7 @@
         youtube.py
 ---------------------------
 Author:     Breena Lockser
-Date:       2025-10-30
+Date:       2025-11-18
 ---------------------------
 """
 
@@ -11,13 +11,45 @@ import sql as SQL
 import dataManager as data
 import os
 
-def download_song(connectionDB, songName, songTitle, videoURL):
+
+# Search a song by user input.
+def search_video(connectionDB, songName):
+    # Setup the options for yt-dlp
+    params = {
+        # Set to True to silence output
+        'quiet': True,
+        # Prevent downloading playlists
+        'noplaylist': True,
+    }    
+    print(f"Searching...")
+    with ytdlp.YoutubeDL(params) as ydl:
+        # Search and extract only the first result
+        results = ydl.extract_info(f"ytsearch1:{songName}", download=False)
+        result = results['entries'][0]
+        # Get properties.
+        songID = result['id']
+        songName = result['title']
+        songURL = result['webpage_url']
+        channelID = result['channel_id']
+        channelName = result['channel']
+        channelURL = result['channel_url']
+        print("Found song:", songURL)
+        print("ID:", songID)
+        print("From:", channelName)
+        print("Channel ID:", channelID)
+    # Check if the song or song is not way too long. (For storage proposes)
+    if result['duration'] < 300:
+        download_song(connectionDB, songID, songName, songURL, channelID, channelName, channelURL)
+
+
+# Download a song by url.
+def download_song(connectionDB, songID, songName, songURL, channelID, channelName, channelURL):
     # Setup the options for yt-dlp
     params = {
         # Downloads the best audio format
         'format': 'bestaudio/best',
         # Output file name based on song name
-        'outtmpl': f'{songName}.mp3',
+        'outtmpl': f'{songID}.mp3',
         # Set to True to silence output
         'quiet': True,
         # Prevent downloading playlists
@@ -29,27 +61,8 @@ def download_song(connectionDB, songName, songTitle, videoURL):
     print("Downloading...")
     with ytdlp.YoutubeDL(params) as ydl:
         # Search and download only the first result
-        ydl.download([videoURL])
-        SQL.addSong(connectionDB, songName, songTitle, videoURL, songPath)
-
-
-def search_video(connectionDB, songName):
-    # Setup the options for yt-dlp
-    params = {
-        # Output file name based on song name
-        'outtmpl': f'{songName}.%(ext)s',
-        # Set to True to silence output
-        'quiet': True,
-        # Prevent downloading playlists
-        'noplaylist': True,
-    }    
-    print(f"Searching...")
-    with ytdlp.YoutubeDL(params) as ydl:
-        # Search and extract only the first result
-        result = ydl.extract_info(f"ytsearch1:{songName}", download=False)
-        video_url = result['entries'][0]['webpage_url']
-        print(f"Found song: {video_url}")
-    # Check if the song or video is not way too long. (For storage propuses)
-    if result['entries'][0]['duration'] < 300:
-        songYoutubeName = result['entries'][0]['title']
-        download_song(connectionDB, songName, songYoutubeName, video_url)
+        ydl.download(songURL)
+        if SQL.getArtistID(connectionDB, channelName) == False:
+            SQL.addArtist(connectionDB, channelID, channelName, channelURL)
+        artistID = SQL.getArtistID(connectionDB, channelName)
+        SQL.addSong(connectionDB, songID, songName, songURL, songPath, artistID)
