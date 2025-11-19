@@ -2,8 +2,8 @@
         control.py
 ---------------------------
 Author:     Breena Lockser
-Date:       2025-10-30
-Version:    0.35
+Date:       2025-11-19
+Version:    0.6
 ---------------------------
 """
 
@@ -101,14 +101,9 @@ def play_music(connectionDB):
         if len(userInput) == 0:
             print("Please, insert a song ID.")
         else:
-            try:
-                userInput = int(userInput)
-                break
-            except:
-                print("Not a valid ID!")
-    songData = SQL.getSongData(connectionDB, userInput)
-    print("Path:", songData[5])
-    input("Press anything to continue.")
+            songData = SQL.getSongData(connectionDB, userInput)
+            print("Path:", songData[5])
+            input("Press anything to continue.")
 #endregion
 
 #region List...
