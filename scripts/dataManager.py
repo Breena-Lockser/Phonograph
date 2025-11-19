@@ -37,14 +37,31 @@ def check_date(connectionDB):
             f.write(date)
 
 
-# DEBUG ONLY
+#region DEBUG ONLY
+def debug_reset():
+    dirs = ["tmp", "playlists"]
+    for folder in dirs:
+        root = os.path.join("tmp")
+        for filename in os.listdir(root):
+            filePath = os.path.join(root, filename)
+            try:
+                if os.path.isfile(filePath) or os.path.islink(filePath):
+                    os.unlink(filePath)
+                elif os.path.isdir(filePath):
+                    shutil.rmtree(filePath)
+            except Exception as e:
+                print('Failed to delete %s. Reason: %s' % (filePath, e))
+
+
 def restart_database(connectionDB):
     while True:
         userInput = input("Wish to remove all data? (y/n)\n").lower()
         if userInput == "y":
+            debug_reset()
             SQL.SQLreset(connectionDB)
             break
         elif userInput == "n":
             break
         else:
             print("Not a valid response.")
+#endregion

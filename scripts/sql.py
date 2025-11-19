@@ -24,9 +24,10 @@ def databaseCreation(connectionDB):
                     song_id TEXT PRIMARY KEY UNIQUE,
                     song_name TEXT NOT NULL UNIQUE,
                     song_artist_id TEXT NOT NULL,
-                    video_url TEXT NOT NULL UNIQUE,
+                    song_url TEXT NOT NULL UNIQUE,
+                    song_duration INTTEGER NOT NULL,
+                    song_path TEXT NOT NULL UNIQUE,
                     countdown INTEGER NOT NULL,
-                    path TEXT NOT NULL UNIQUE,
                     FOREIGN KEY (song_artist_id) REFERENCES artists(artist_id)
                 )""",
                  """CREATE TABLE IF NOT EXISTS artists(
@@ -50,10 +51,10 @@ def databaseCreation(connectionDB):
 
 #region Add ...
     # Add a song by using the youtube.py parameters.
-def addSong(connectionDB, songID, songName, songURL, songPath, songArtistID):
+def addSong(connectionDB, songID, songName, songURL, songDuration, songPath, songArtistID):
     cur = connectionDB.cursor()
-    cur.execute("INSERT INTO songs (song_id, song_name, video_url, path, song_artist_id, countdown) VALUES (?, ?, ?, ?, ?, ?)", 
-                (songID, songName, songURL, songPath, songArtistID, 3))
+    cur.execute("INSERT INTO songs (song_id, song_name, song_url, song_duration, song_path, song_artist_id, countdown) VALUES (?, ?, ?, ?, ?, ?, ?)", 
+                (songID, songName, songURL, songDuration, songPath, songArtistID, 3))
     cur.close()
 
     connectionDB.commit()
@@ -238,7 +239,9 @@ def lowerCountdown(connectionDB):
 #region DEBUG ONLY
 def SQLreset(connectionDB):
     cur = connectionDB.cursor()
-    cur.execute("DELETE FROM songs")
+    commands = ["DELETE FROM songs", "DELETE FROM artists", "DELETE FROM playlists"]
+    for command in commands:
+        cur.execute(command)
     cur.close()
     connectionDB.commit()
     return

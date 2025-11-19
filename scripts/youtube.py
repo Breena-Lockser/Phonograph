@@ -30,20 +30,30 @@ def search_video(connectionDB, songName):
         songID = result['id']
         songName = result['title']
         songURL = result['webpage_url']
+        songDuration = result['duration']
         channelID = result['channel_id']
         channelName = result['channel']
         channelURL = result['channel_url']
-        print("Found song:", songURL)
+        # Show what was found.
+        print("Found song:", songName)
+        print("URL:", songURL)
         print("ID:", songID)
         print("From:", channelName)
         print("Channel ID:", channelID)
+        # Give the option for the user to say if it's alright.
+        while True:
+            userInput = input("Is this what you were looking for? (y/n)\n")
+            if userInput.lower() == "n":
+                return False
+            else:
+                break
     # Check if the song or song is not way too long. (For storage proposes)
-    if result['duration'] < 300:
-        download_song(connectionDB, songID, songName, songURL, channelID, channelName, channelURL)
+    if songDuration < 300:
+        return download_song(connectionDB, songID, songName, songDuration, songURL, channelID, channelName, channelURL)
 
 
 # Download a song by url.
-def download_song(connectionDB, songID, songName, songURL, channelID, channelName, channelURL):
+def download_song(connectionDB, songID, songName, songDuration, songURL, channelID, channelName, channelURL):
     # Setup the options for yt-dlp
     params = {
         # Downloads the best audio format
@@ -65,4 +75,5 @@ def download_song(connectionDB, songID, songName, songURL, channelID, channelNam
         if SQL.getArtistID(connectionDB, channelName) == False:
             SQL.addArtist(connectionDB, channelID, channelName, channelURL)
         artistID = SQL.getArtistID(connectionDB, channelName)
-        SQL.addSong(connectionDB, songID, songName, songURL, songPath, artistID)
+        SQL.addSong(connectionDB, songID, songName, songDuration, songURL, songPath, artistID)
+    return True

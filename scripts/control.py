@@ -77,8 +77,9 @@ def search_song_user(connectionDB):
         if len(userInput) == 0:
             print("Please, insert a song name.")
         else:
-            break
-    YT.search_video(connectionDB, userInput)
+            if YT.search_video(connectionDB, userInput) == True:
+                break
+    
 #endregion
 
 #region Get path of a song.
