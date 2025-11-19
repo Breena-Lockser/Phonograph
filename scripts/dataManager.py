@@ -2,16 +2,16 @@
         dataManager.py
 ---------------------------
 Author:     Breena Lockser
-Date:       2025-11-18
+Date:       2025-11-19
 ---------------------------
 """
 
 import sql as SQL
-import datetime, os, shutil
+import datetime, os, shutil, json
 
 
 # Create all necessary folders for correct usage of the program.
-def createFolders():
+def create_folders():
     dirs = ["tmp", "DBs", "playlists"]
     for folder in dirs:
         path = os.path.join(folder)
@@ -35,6 +35,12 @@ def check_date(connectionDB):
     except:
         with open("lastDate.txt", "w") as f:
             f.write(date)
+
+
+# Create a playlist
+def create_playlist(connectionDB, playlistName):
+    # TO-DO
+    pass
 
 
 #region DEBUG ONLY

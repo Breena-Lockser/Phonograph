@@ -3,7 +3,7 @@
 ---------------------------
 Author:     Breena Lockser
 Date:       2025-11-19
-Version:    0.6
+Version:    0.7
 ---------------------------
 """
 
@@ -16,7 +16,7 @@ import os
 temporal_TUI = """
 PHONOGRAPH
 -----------
-VERSION 0.6
+VERSION 0.7
 MADE BY Breena Lockser
 ----------------------
 
@@ -143,7 +143,7 @@ def list_all_playlists(connectionDB):
 
 if __name__ == "__main__":
     # Check for folders (Such as DBs and tmp).
-    dataManager.createFolders()
+    dataManager.create_folders()
     # Connect to the DB and create a table if not existent.
     connectionDB = SQL.databaseConnection()
     SQL.databaseCreation(connectionDB)
