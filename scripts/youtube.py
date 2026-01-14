@@ -2,7 +2,7 @@
         youtube.py
 ---------------------------
 Author:     Breena Lockser
-Date:       2025-11-19
+Date:       2025-11-27
 ---------------------------
 """
 
@@ -45,7 +45,7 @@ def search_video(connectionDB, songName):
             userInput = input("Is this what you were looking for? (y/n)\n")
             if userInput.lower() == "n":
                 return False
-            else:
+            elif userInput.lower() == "y":
                 break
     # Check if the song or song is not way too long. (For storage proposes)
     if songDuration < 300:

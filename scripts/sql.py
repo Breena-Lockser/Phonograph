@@ -2,7 +2,7 @@
         sql.py
 ---------------------------
 Author:     Breena Lockser
-Date:       2025-11-19
+Date:       2025-11-27
 ---------------------------
 """
 
@@ -49,6 +49,9 @@ def databaseCreation(connectionDB):
     return
 #endregion
 
+
+
+
 #region Add ...
     # Add a song by using the youtube.py parameters.
 def addSong(connectionDB, songID, songName, songURL, songDuration, songPath, songArtistID):
@@ -80,6 +83,9 @@ def addPlaylist(connectionDB, playlistName, playlistPath):
     connectionDB.commit()
     return True
 #endregion
+
+
+
 
 #region Remove ...
     # Remove a song with a certain ID
@@ -115,6 +121,9 @@ def removeArtist(connectionDB, artistID):
     connectionDB.commit()
     return
 #endregion
+
+
+
 
 #region List ...
     # List all songs in the songs table in DB.
@@ -153,6 +162,9 @@ def listPlaylists(connectionDB):
         return False
 #endregion
 
+
+
+
 #region Get data from...
     # Check all song data from a song with a certain ID.
 def getSongData(connectionDB, songID):
@@ -190,6 +202,9 @@ def getPlaylistData(connectionDB, playlistID):
         return False
 #endregion
 
+
+
+
 #region Get ID from...
 def getSongID(connectionDB, songName):
     cur = connectionDB.cursor()
@@ -226,6 +241,9 @@ def getPlaylistID(connectionDB, playlistName):
         return False
 #endregion
 
+
+
+
 #region Miscellaneous
     # Lower by 1 every song countdown (Only done if date has changed.)
 def lowerCountdown(connectionDB):
@@ -235,6 +253,9 @@ def lowerCountdown(connectionDB):
     connectionDB.commit()
     return
 #endregion
+
+
+
 
 #region DEBUG ONLY
 def SQLreset(connectionDB):
